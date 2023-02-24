@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>事件委托</title>
+</head>
+
+<body>
+  <ul id="list">
+    <li>项目1</li>
+    <li>项目2</li>
+    <li>项目3</li>
+    <li>项目4</li>
+    <li>项目5</li>
+  </ul>
+
+  <script>
+    const ul = document.getElementById('list');
+    ul.addEventListener('click', function (e) {
+      if (e.target && e.target.nodeName.toUpperCase() === 'LI') {
+        alert(e.target.innerHTML);
+      }
+    })
+  </script>
+</body>
+
+</html>

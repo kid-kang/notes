@@ -1,0 +1,20 @@
+<script>
+  // 这是浏览器环境!!
+  Function.prototype.myCall = function (obj = window, ...args) {
+    obj.fn = this;
+    let res = obj.fn(...args);
+    delete obj.fn;
+    return res;
+  };
+
+  //call的实现思路
+  //我们希望把fn里的this指向foo,那我们把fn放进foo里面才能实现这个效果
+  var value = 0;  //var申明的是挂在window上的
+  const foo = { value: 99 };
+  function fn(name) {
+    console.log(this.value, name);
+  }
+  fn('wzk');  // 0 'wzk'
+  fn.call();  // 0 undefined
+  fn.myCall(foo, 'wzk');   // 99 'wzk'
+</script>
