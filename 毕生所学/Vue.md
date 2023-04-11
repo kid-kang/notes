@@ -412,7 +412,7 @@ export default createStore({
     module1,
     module2
 })
-//组件使用时在接收的数组前加标识 mapState([module1,"age","sex"])
+//组件使用时在接收的数组前加标识 mapState(module1, ["age","sex"])
 ```
 
 ## Mixin
