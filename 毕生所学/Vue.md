@@ -355,7 +355,7 @@ beforeRouteLeave(to,from){...有this}//离开当前路由时触发
 ### 基本使用
 
 ```js
-//$store.state.name可以直接获取
+//$store.state.name可以直接获取，watch监听不能用该方法
 import { createStore } from 'vuex'
 export default createStore({
   state: {
