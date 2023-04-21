@@ -2,6 +2,8 @@
 
 Vue3（vite脚手架）：`npm init vue@latest -y`
 
+[Vue3快速上手](https://juejin.cn/post/7151909645399883807)
+
 Vue2：`vue create filename`
 
 CDN：`<script src="https://unpkg.com/vue@next"></script>`

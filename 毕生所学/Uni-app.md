@@ -15,12 +15,6 @@
 
 ##### 利用HbuilderX初始化项目
 
-+ 点击HbuilderX菜单栏文件>项目>新建
-
-+ 选择uni-app,填写项目名称，项目创建的目录
-
-  ![](C:/Users/乐此不疲/Desktop/uni-app资料/uni-app资料/讲义/images/create.jpg)
-
 
 ##### 运行项目
 
