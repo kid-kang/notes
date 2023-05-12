@@ -1,6 +1,54 @@
 [webpack文档](https://lab.puji.design/webpack-getting-started-manual/)
 
-## 为什么需要webpack
+### 什么是构建工具？
+
+##### 不用构建工具：
+
+稍微改一点点东西, 非常麻烦
+
+将App.ts ---> tsc ---> App.js ---> React-complier ---> js文件
+
+每次改一点 ---> 这个顺序还不能错 
+
+##### 构建工具：
+
+我们写的代码一变化 ---> 构建工具帮我们自动去tsc, react-compiler, less, babel, uglifyjs全部挨个走一遍 ---> js
+
+构建工具能够帮你把tsc, react-compiler, less, babel, uglifyjs全部集成到一起
+
+我们只需要关心我们写的代码就好了 
+
+> 打包: 将我们写的浏览器不认识的代码 交给构建工具进行编译处理的过程就叫做打包, 打包完成以后会给我们一个浏览器可以认识的文件
+
+一个构建工具他到底承担了哪些脏活累活:
+
+1. 模块化开发支持: 支持直接从node_modules里引入代码 + 多种模块化支持
+2. 处理代码兼容性: 比如babel语法降级, less,ts 语法转换(**不是构建工具做的, 构建工具将这些语法对应的处理工具集成进来自动化处理**)
+3. 提高项目性能: 压缩文件, **代码分割**
+4. 优化开发体验: 
+   - 热更新
+   - 跨域的问题
+
+### vite为什么比webpack启动的更快
+
+webpack支持多种模块化：ESmodule，common.js等
+
+他一开始必须要统一模块化代码, 所以意味着他需要将所有的依赖全部读一遍
+
+ webpack更多的关注兼容性, 而vite关注浏览器端的开发体验
+
+
+
+### 为什么ESmodule导入只能是绝对或相对路径
+
+### 为什么导入`import _ from 'lodash'`的时候不去node_modules去找一下呢？
+
+- 因为ESmodule是基于浏览器端的，lodash里可能还嵌套引入了上百种js文件，浏览器是通过网络请求文件的，所以这样会造成网络多包传输的性能问题(也是原生esmodule规范不敢支持node_modules的原因之一), 有了依赖预构建以后无论他有多少的额外export 和import, vite都会尽可能的将他们进行集成最后只生成一个或者几个模块
+- **依赖预构建**: 首先vite会找到对应的依赖, 然后调用esbuild(对js语法进行处理的一个库), 将其他规范的代码转换成esmodule规范, 然后放到当前目录下的node_modules/.vite/deps, 同时对esmodule规范的各个模块进行统一集成 
+
+
+
+## 为什么需要构建工具？
 
 **浏览器的运行效率问题**
 
