@@ -1,5 +1,24 @@
 
 
+#### 天坑
+
+``uniapp`使用`vue3`语法无法通过`ref`获取`dom`节点。(在小程序平台，仅自定义组件支持ref属性)。解决办法如下`
+
+```js
+const instance = getCurrentInstance()
+let { proxy } = instance	// vue3 this
+
+onMounted(() => {
+  const query = uni.createSelectorQuery().in(proxy)
+  query.select('.text-content').boundingClientRect((data) => {
+    // data 中含有元素的宽高和位子信息
+    //query.select('.text-content') 应该就是dom节点
+  }).exec()
+})
+```
+
+
+
 #### 技巧
 
 - block标签是虚拟标签
