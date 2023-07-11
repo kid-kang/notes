@@ -1,3 +1,5 @@
+
+
 # React基础
 
 ## React介绍
@@ -6,11 +8,27 @@
 
 ​     一个专注于构建用户界面的 JavaScript 库
 
-​	React英文文档（https://reactjs.org/）
-
 ​	React中文文档 （https://zh-hans.reactjs.org/）
 
 ​	React新文档	（https://beta.reactjs.org/）（开发中....）
+
+**vite安装命令**
+
+```js
+// npm
+npm init vite@latest
+// yarn
+yarn create vite
+
+// react + TS
+npx create-react-app my-app --template typescript
+
+# react + Redux
+npx create-react-app my-app --template redux
+
+# Redux + TypeScript
+npx create-react-app my-app --template redux-typescript
+```
 
 **React有什么特点**
 
@@ -581,6 +599,24 @@ export default App
 
 
 
+## useReducer - 集中管理state的修改方法
+
+```js
+import { useReducer } from 'react';
+
+function reducer(state, action) {
+  // ...
+    return ...
+}
+
+// dispatch函数触发reducer函数
+function MyComponent() {
+  const [state, dispatch] = useReducer(reducer, { age: 42 });
+  // ...
+```
+
+
+
 ## useEffect - async/await问题
 
 **语法要求**
@@ -660,3 +696,18 @@ function App() {
 }
 export default App
 ```
+
+
+
+# Redux Toolkit（RTK）
+
+[RTK中文官网](https://cn.redux.js.org/introduction/getting-started/)
+
+```js
+# NPM
+npm install react-redux @reduxjs/toolkit -S
+
+# Yarn
+yarn add react-redux @reduxjs/toolkit
+```
+
