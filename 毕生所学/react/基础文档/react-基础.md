@@ -4,15 +4,11 @@
 
 ## React介绍
 
-**React是什么**
-
-​     一个专注于构建用户界面的 JavaScript 库
+**React是什么
 
 ​	React中文文档 （https://zh-hans.reactjs.org/）
 
-​	React新文档	（https://beta.reactjs.org/）（开发中....）
-
-**vite安装命令**
+**脚手架创建项目**
 
 ```js
 // npm
@@ -28,6 +24,8 @@ npx create-react-app my-app --template redux
 
 # Redux + TypeScript
 npx create-react-app my-app --template redux-typescript
+
+// npx 命令会帮助我们临时安装create-react-app包，然后初始化项目完成之后会自自动删掉，所以不需要全局安装create-react-app
 ```
 
 **React有什么特点**
@@ -42,45 +40,6 @@ npx create-react-app my-app --template redux-typescript
 
    react既可以开发web应用也可以使用同样的语法开发原生应用（react-native），比如安卓和ios应用，甚至可以使用react开发VR应用，想象力空间十足，react更像是一个 `元框架`  为各种领域赋能
 
-   
-   
-
-## 环境初始化
-
-### 1. 使用脚手架创建项目 
-
-```bash
-npx create-react-app react-basic
-```
-
-说明：
-
-1. npx create-react-app 是固定命令，`create-react-app`是React脚手架的名称
-2. react-basic表示项目名称，可以自定义，保持语义化
-3. npx 命令会帮助我们临时安装create-react-app包，然后初始化项目完成之后会自自动删掉，所以不需要全局安装create-react-app
-
-- 启动项目
-
-  ```bash
-  yarn start
-  or
-  npm start
-  ```
-
-```jsx
-import React from 'react'
-import ReactDOM from 'react-dom'
-import './index.css'
-// 引入根组件App
-import App from './App'
-// 通过调用ReactDOM的render方法渲染App根组件到id为root的dom节点上
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-)
-```
 
 ## JSX基础
 
@@ -135,26 +94,6 @@ export default App
 
 ### 4. JSX样式处理
 
-- 行内样式 - style
-
-  ```jsx
-  const styleObj = {
-      color:red
-  }
-  
-  function App() {
-    return (
-      <div className="App">
-        <div style={ styleObj }>this is a div</div>
-      </div>
-    )
-  }
-  
-  export default App
-  ```
-
-  
-
 - 类名 - className - 动态类名控制
 
   ```jsx
@@ -169,13 +108,6 @@ export default App
   }
   export default App
   ```
-
-### 6. JSX注意事项
-
-1. JSX必须有一个根节点，如果没有根节点，可以使用`<></>`（幽灵节点）替代
-2. 所有标签必须形成闭合，成对闭合或者自闭合都可以
-3. JSX中的语法更加贴近JS语法，属性名采用驼峰命名法  `class -> className`  `for -> htmlFor`
-4. JSX支持多行（换行），如果需要换行，需使用`()` 包裹，防止bug出现
 
 ## 函数组件
 
@@ -271,20 +203,22 @@ changeHandler = (e) => {
 
 **实现步骤**
 
-1. 导入`createRef` 函数
-2. 调用createRef函数，创建一个ref对象，存储到名为`msgRef`的实例属性中
+1. 导入`useRef`函数
+2. 调用useRef函数，创建一个ref对象，存储到名为`msgRef`的实例属性中
 3. 为input添加ref属性，值为`msgRef`
 4. 在按钮的事件处理程序中，通过`msgRef.current`即可拿到input对应的dom元素，而其中`msgRef.current.value`拿到的就是文本框的值
 
 ```jsx
-import React, { createRef } from 'react'
+import React, { useRef } from 'react'
 
 // 使用createRef产生一个存放dom的对象容器
-msgRef = createRef()
+msgRef = useRef(null)
 
 changeHandler = () => {
     console.log(this.msgRef.current.value)
 }
+
+<input ref={carouselRef}>
 ```
 
 # React组件通信
@@ -569,33 +503,7 @@ const [name, setName] = useState(()=>{    // 编写计算逻辑    return '计�
 **语法选择**
 
 1. 如果就是初始化一个普通的数据 直接使用 `useState(普通数据)` 即可
-2. 如果要初始化的数据无法直接得到需要通过计算才能获取到，使用`useState(()=>{})` 
-
-```jsx
-import { useState } from 'react'
-
-function Counter(props) {
-  const [count, setCount] = useState(() => {
-    return props.count
-  })
-  return (
-    <div>
-      <button onClick={() => setCount(count + 1)}>{count}</button>
-    </div>
-  )
-}
-
-function App() {
-  return (
-    <>
-      <Counter count={10} />
-      <Counter count={20} />
-    </>
-  )
-}
-
-export default App
-```
+2. 如果要初始化的数据无法直接得到需要通过计算(变量)才能获取到，使用`useState(()=>{})` 
 
 
 
@@ -604,9 +512,20 @@ export default App
 ```js
 import { useReducer } from 'react';
 
-function reducer(state, action) {
-  // ...
-    return ...
+function reducer(state, action) {	// action 是调用dispatch时传的参数
+  switch (action.type) {
+    case 'incremented_age': {
+      return {
+        age: state.age + 1
+      };
+    }
+    case 'dec_age': {
+      return {
+        age: state.age - 1
+      };
+    }
+  }
+  throw Error('Unknown action: ' + action.type);
 }
 
 // dispatch函数触发reducer函数
@@ -699,15 +618,172 @@ export default App
 
 
 
-# Redux Toolkit（RTK）
+# Router
 
-[RTK中文官网](https://cn.redux.js.org/introduction/getting-started/)
+## 基本使用
 
-```js
-# NPM
-npm install react-redux @reduxjs/toolkit -S
+```jsx
+npm i react-router-dom@6
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom' 	//HashRouter
+ 
+function Home () {
+  return (
+    <p>这是首页的内容</p>
+  )
+}
+function About () {
+  return (
+    <p>这是关于的内容</p>
+  )
+}
+function App () {
+  return (
+    // 声明当前要用一个非hash模式的路由
+    <BrowserRouter>
+      <div className="App">
+        {/* 指定跳转的组件，to 用来配置路由地址 */}
+        <Link to="/">首页</Link>
+        <Link to="/about">关于</Link>
+        {/* 路由出口：路由对应的组件会在这里进行渲染 */}
+        <Routes>
+          {/* 指定路由路径和组件的对应关系：path 代表路径，element 代表对应的组件，它们成对出现 */}
+          <Route path='/' element={<Home />}></Route>
+          <Route path='/about' element={<About />}></Route>
+        </Routes>
+      </div>
+    </BrowserRouter>
+  )
+}
+ 
+export default App
+// NavLink可以获取active Tab
+```
 
-# Yarn
-yarn add react-redux @reduxjs/toolkit
+## 编程式导航
+
+```jsx
+import { useNavigate } from 'react-router-dom'
+const Home = () => {
+  const navigate = useNavigate()
+  return (
+    <div>
+      Home
+      <button onClick={ ()=> navigate('/about') }> 跳转关于页 </button>  // navigate(-1)
+    </div>
+  )
+}
+
+// 注: 路由传参 + 历史记录方式
+navigate('/?id=1001&name=zs', { replace: true })  // searchParams传参
+navigate('/about/1002/lisi', { replace: true })	 // params传参
+navigate('/about', { state: {id: 888} })	 // state传参
+
+{/* 使用 params 传参和接收参数时，指定路由路径时需要提前使用“占位符”给参数进行占位 */}
+<Route path='/about/:id/:name' element={<About />}></Route>
+
+// 取参
+// searchParams取
+import { useSearchParams } from 'react-router-dom'
+const [params] = useSearchParams()	// params 是一个对象，对象里有一个get方法用来获取对应的参数
+const id = params.get('id')
+
+// params取
+import { useParams } from 'react-router-dom'
+const params = useParams()	// 直接用params.id
+
+// state取
+import { useLocation } from 'react-router-dom'
+const {state} = useLocation()	// useLocation() 返回的是对像，其中有个state对象
+const id = state.id
+```
+
+## 嵌套路由
+
+- 在一级路由的 <Route></Route> 中定义嵌套路由声明
+- 在该一级路由组件内部通过 <Outlet /> 指定二级路由出口
+
+```jsx
+import { BrowserRouter, Routes, Route, Link, Outlet } from 'react-router-dom'
+const About = () => {
+  return (
+    <div>
+      <Link to='/aa'>二级aa</Link>
+      <Link to='/bb'>二级bb</Link>
+      <Outlet />
+    </div>
+  )
+}
+
+function App () {
+  return (
+    <BrowserRouter>
+      <div className="App">
+        <Routes>
+          {/* 一级路由 */}
+          <Route path='/about' element={<About />}>
+            {/* 在一级路由内部嵌套二级路由 */}
+            {/* 默认二级：添加 index 属性，把它自己的 path 去掉即可 */}
+            <Route index element={<Aa />}></Route>
+            <Route path='bb' element={<Bb />}></Route>
+          </Route>
+        </Routes>
+      </div>
+    </BrowserRouter>
+  )
+}
+ 
+export default App
+```
+
+## 404组件
+
+- 把该组件的路由对应关系配置为 **Routes 内部的一级路由，path='\*'**
+
+## 集中式路由配置
+
+场景: 当我们需要路由权限控制点时候, 对路由数组做一些权限的筛选过滤，所谓的集中式路由配置就是用一个数组统一把所有的路由对应关系写好替换本来的 Roues 组件
+
+```jsx
+import { useRoutes } from 'react-router-dom'
+ 
+import Layout from './pages/Layout'
+import Board from './pages/Board'
+import Article from './pages/Article'
+import NotFound from './pages/NotFound'
+ 
+const GetRouters = () => useRoutes([
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      {
+        element: <Board />,
+        index: true, // index设置为true 变成默认的二级路由
+      },
+      {
+        path: 'article',
+        element: <Article />,
+      },
+    ],
+  },
+  // 增加n个路由对应关系
+  {
+    path: '*',
+    element: <NotFound />,
+  },
+])
+export default GetRouters;
+ 
+
+// 2. App中使用 GetRouters
+import GetRouters from './router'
+function App() {
+  return (
+    <div className="App">
+      // NavLink...
+      <GetRouters />
+    </div>
+  )
+}
 ```
 
