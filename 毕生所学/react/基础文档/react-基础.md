@@ -323,32 +323,29 @@ function App() {
 ```jsx
 // 祖先
 import { createContext } from 'react';
-const ThemeContext = createContext();
+export const xxContext = createContext(null);
 
 function App() {
-  const [theme, setTheme] = useState('light');
+  const [age, setAge] = useState(18);
   // ...
   return (
-    <ThemeContext.Provider value={theme}>
+    <xxContext.Provider value={age}>
       <Page />
-    </ThemeContext.Provider>
+    </xxContext.Provider>
   );
 }
 ```
 
 ```jsx
 //后代
-import { createContext } from 'react';
-const ThemeContext = createContext();
+import { useContext } from 'react';
+import { xxContext } from '../...';
 
 function Grandson() {
-  // useContext(SomeContext) 来获取它上面最近的 context provider 的 value。
-  const theme = useContext(ThemeContext);
-  return <button className={theme} />;
+  const appAge = useContext(xxContext)
+  return <button className={appAge} />;
 }
 ```
-
-
 
 
 
