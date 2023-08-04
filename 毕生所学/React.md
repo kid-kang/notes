@@ -4,8 +4,6 @@
 
 ## React介绍
 
-**React是什么
-
 ​	React中文文档 （https://zh-hans.reactjs.org/）
 
 **脚手架创建项目**
@@ -32,7 +30,7 @@ npx create-react-app my-app --template redux-typescript
 
 1. 声明式UI（JSX）
 
-   ![](assets/jsx02.png)
+   ![](/img/jsx02.png)
 
 2. 组件化
 
