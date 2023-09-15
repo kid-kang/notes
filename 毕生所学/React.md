@@ -349,7 +349,7 @@ function Grandson() {
 
 # React组件进阶
 
-## children属性
+## children属性（插槽）
 
 **children属性是什么**
 
@@ -499,6 +499,25 @@ const [name, setName] = useState(()=>{    // 编写计算逻辑    return '计�
 
 1. 如果就是初始化一个普通的数据 直接使用 `useState(普通数据)` 即可
 2. 如果要初始化的数据无法直接得到需要通过计算(变量)才能获取到，使用`useState(()=>{})` 
+
+
+
+## useImperativeHandle - forwardRef
+
+导出子组件的方法供父组件调用
+
+```js
+//子组件
+export default forwardRef(function Comp(props, ref) {
+  useImperativeHandle(ref, () => ({
+    setOpen,
+  }));
+}
+
+// 父组件
+<NewDrawerForm ref={newDrawerFormRef}/>
+{newDrawerFormRef.current.setOpen(true)}
+```
 
 
 
