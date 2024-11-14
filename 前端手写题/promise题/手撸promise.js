@@ -1,183 +1,192 @@
 class Promise {
   constructor(executor) {
-    this.PromiseState = 'pending';
-    this.PromiseResult = null;
-    this.callbacks = [];
+    this.PromiseState = 'pending'
+    this.PromiseResult = null
+    // 调多个then（这里说的不是链式调用）所有then中回调都能执行（Promise状态改变的话），所以是用数组存起来
+    this.callbacks = []
 
-    const self = this;
+    const self = this
 
-    //resolve 函数
     function resolve(data) {
-      //判断状态
-      if (self.PromiseState !== 'pending') return;
-      //1. 修改对象的状态 (promiseState)
-      self.PromiseState = 'fulfilled';// resolved
-      //2. 设置对象结果值 (promiseResult)
-      self.PromiseResult = data;
-      //调用成功的回调函数
+      // 状态只能修改一次
+      if (self.PromiseState !== 'pending') return
+
+      self.PromiseState = 'fulfilled'
+      self.PromiseResult = data
+
+      // 进入到这里的都是异步改变状态的Promise，在当前宏任务中要体现then回调的异步性
       setTimeout(() => {
+        // 改变状态之后再执行then中的回调
         self.callbacks.forEach(item => {
-          item.onResolved(data);
-        });
-      });
+          item.onResolved(data)
+        })
+      })
     }
 
-    //reject 函数
     function reject(data) {
-      //判断状态
-      if (self.PromiseState !== 'pending') return;
-      //1. 修改对象的状态 (promiseState)
-      self.PromiseState = 'rejected';// 
-      //2. 设置对象结果值 (promiseResult)
-      self.PromiseResult = data;
-      //执行失败的回调
+      if (self.PromiseState !== 'pending') return
+      self.PromiseState = 'rejected'
+      self.PromiseResult = data
       setTimeout(() => {
         self.callbacks.forEach(item => {
-          item.onRejected(data);
-        });
-      });
+          item.onRejected(data)
+        })
+      })
     }
 
+    // try-catch 捕获 throw 错误
     try {
-      //同步调用『执行器函数』
-      executor(resolve, reject);
+      executor(resolve, reject)
     } catch (e) {
-      //修改 promise 对象状态为『失败』
-      reject(e);
+      reject(e)
     }
   }
 
-  // 原型上的方法 ----  then 方法封装
+  // 原型上的方法 ----  then
   then(onResolved, onRejected) {
-    const self = this;
-    //判断回调函数参数
+    // 设定默认回调实现then的值传递和catch的错误穿透
+    if (typeof onResolved !== 'function') {
+      onResolved = value => value // 这value是上游的PromiseResult
+    }
     if (typeof onRejected !== 'function') {
       onRejected = reason => {
-        throw reason;
-      };
+        throw reason
+      }
     }
-    if (typeof onResolved !== 'function') {
-      onResolved = value => value;
-      //value => { return value};
-    }
+
+    // then也返回Promise
     return new Promise((resolve, reject) => {
       //封装函数
-      function callback(type) {
+      const callback = (type) => {
         try {
-          //获取回调函数的执行结果
-          let result = type(self.PromiseResult);
-          //判断
+          let result = type(this.PromiseResult)
+          // 如果then回调return的也是Promise
           if (result instanceof Promise) {
-            //如果是 Promise 类型的对象
+            // 点睛之笔*
             result.then(v => {
-              resolve(v);
+              resolve(v)
             }, r => {
-              reject(r);
-            });
+              reject(r)
+            })
           } else {
-            //结果的对象状态为『成功』
-            resolve(result);
+            // 其他情况均为成功
+            resolve(result)
           }
         } catch (e) {
-          reject(e);
+          reject(e)
         }
       }
-      //调用回调函数  PromiseState
+
+      // 同步改变Promise状态为fulfilled时
       if (this.PromiseState === 'fulfilled') {
+        // 体现异步（微任务）
         setTimeout(() => {
-          callback(onResolved);
-        });
+          callback(onResolved)
+        })
       }
       if (this.PromiseState === 'rejected') {
         setTimeout(() => {
-          callback(onRejected);
-        });
+          callback(onRejected)
+        })
       }
-      //判断 pending 状态
+
+      // 进入队列的都是异步改变状态的Promise
       if (this.PromiseState === 'pending') {
         //保存回调函数
         this.callbacks.push({
-          onResolved: function () {
-            callback(onResolved);
-          },
-          onRejected: function () {
-            callback(onRejected);
-          }
-        });
+          onResolved: () => callback(onResolved),
+          onRejected: () => callback(onRejected)
+        })
       }
-    });
+    })
   }
 
-  //catch 方法
+  // 有了默认回调铺垫 - 直接接收错误
   catch(onRejected) {
-    return this.then(undefined, onRejected);
+    return this.then(undefined, onRejected)
   }
 
-  //添加 resolve 方法
+  finally(onFinally) {
+    this.then(() => {
+      onFinally()
+    }, () => {
+      onFinally()
+    })
+  }
+
+  // static定义的是类上的方法
   static resolve(value) {
-    //返回promise对象
+    // 返回的状态不一定是成功的状态
     return new Promise((resolve, reject) => {
       if (value instanceof Promise) {
         value.then(v => {
-          resolve(v);
+          resolve(v)
         }, r => {
-          reject(r);
-        });
+          reject(r)
+        })
       } else {
-        //状态设置为成功
-        resolve(value);
+        resolve(value)
       }
-    });
+    })
   }
 
-  //添加 reject 方法
+  // 返回的一定是失败的状态
   static reject(reason) {
-    return new Promise((resolve, reject) => {
-      reject(reason);
-    });
+    return new Promise((_, reject) => {
+      reject(reason)
+    })
   }
 
-  //添加 all 方法
-  static all(promises) {
-    //返回结果为promise对象
+  static all(arr) {
     return new Promise((resolve, reject) => {
-      //声明变量
-      let count = 0;
-      let arr = [];
-      //遍历
-      for (let i = 0; i < promises.length; i++) {
-        //
-        promises[i].then(v => {
-          //得知对象的状态是成功
-          //每个promise对象 都成功
-          count++;
-          //将当前promise对象成功的结果 存入到数组中
-          arr[i] = v;
-          //判断
-          if (count === promises.length) {
-            //修改状态
-            resolve(arr);
+      if (!Array.isArray(arr)) reject("传入的必须是数组")
+      let res = [], count = 0
+      arr.forEach((item, index) => {
+        Promise.resolve(item).then(val => {
+          res[index] = val
+          count++
+          if (count === arr.lenght) {
+            resolve(res)
           }
-        }, r => {
-          reject(r);
-        });
-      }
-    });
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    })
   }
 
-  //添加 race 方法
-  static race(promises) {
+  static race(arr) {
     return new Promise((resolve, reject) => {
-      for (let i = 0; i < promises.length; i++) {
-        promises[i].then(v => {
-          //修改返回对象的状态为 『成功』
-          resolve(v);
+      if (!Array.isArray(arr)) reject("传入的必须是数组")
+      arr.forEach((item) => {
+        // 返回最快的结果
+        Promise.resolve(item).then(v => {
+          resolve(v)
         }, r => {
-          //修改返回对象的状态为 『失败』
-          reject(r);
-        });
-      }
-    });
+          reject(r)
+        })
+      })
+    })
+  }
+
+  static any(arr) {
+    return new MyPromise((resolve, reject) => {
+      if (!Array.isArray(arr)) reject("传入的必须是数组")
+      const errors = []
+      let rejectedCount = 0
+      arr.forEach((item, index) => {
+        MyPromise.resolve(item).then(
+          value => resolve(value),
+          reason => {
+            errors[index] = reason
+            rejectedCount++
+            if (rejectedCount === arr.length) {
+              reject(new AggregateError(errors, 'All promises were rejected'))
+            }
+          }
+        )
+      })
+    })
   }
 }
 

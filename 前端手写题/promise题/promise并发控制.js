@@ -2,7 +2,7 @@
 async function promiseLimit(urls, limit, httpFn) {
   let allPromise = [];//存放所有promise实例
   let pool = []; //并发池
-  for (let url of urls) {
+  for (let url of urls) {   
     if (pool.length >= limit) await Promise.race(pool);
     //等到并发池有空位后开始执行下一个异步
     let p = Promise.resolve(httpFn(url));  //如果非promise 则转成promise
