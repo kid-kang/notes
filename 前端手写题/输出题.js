@@ -1,10 +1,3 @@
-//============================================================
-const arr = [0, 1, 2];
-arr[6] = 6;   // [0, 1, 2, empty × 3, 6]
-const result = arr.filter(x => x === undefined);
-console.log(result);    //[]
-
-
 //=======================事件循环机制=====================================
 setTimeout(() => {
   Promise.resolve().then(() => console.log(4));
@@ -127,4 +120,4 @@ var friendName = 'World';
     console.log('Hello ' + friendName);
   }
 })();
-//Goodbye Jack    var 变量提升
+//Goodbye Jack    var 变量提升 到函数的顶部

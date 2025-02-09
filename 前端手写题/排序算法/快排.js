@@ -6,17 +6,19 @@
 //  快速排序有一个缺点就是对于小规模的数据集性能不是很好。
 
 function quickSort(arr) {
-  if (arr.length <= 1) return arr;   //递归要有返回值、递归出口 不能等于1 要<=1
-  let right = [], left = [], key = arr.shift();  //取首项
+  if (arr.length <= 1) return arr //递归要有返回值、递归出口 不能等于1 要<=1
+  let right = [],
+    left = [],
+    key = arr.shift() //取首项
 
   arr.forEach(value => {
-    if (value >= key) right.push(value);
-    else left.push(value);
-  });
+    if (value >= key) right.push(value)
+    else left.push(value)
+  })
 
-  return quickSort(left).concat(key, quickSort(right));  //递归入口
+  return quickSort(left).concat(key, quickSort(right)) //递归入口
 }
 
 // 测试
-const arr = [3, 44, 38, 5, 47, 15, 36, 26, 27, 2, 46, 4, 19, 50, 48];
-console.log(quickSort(arr));
+const arr = [3, 44, 38, 5, 47, 15, 36, 26, 27, 2, 46, 4, 19, 50, 48]
+console.log(quickSort(arr))
